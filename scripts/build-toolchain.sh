@@ -27,8 +27,13 @@ download-ci-llvm = true
 extended = true
 
 [rust]
+channel = "nightly"
 codegen-units = 1
 download-rustc = false
+
+[dist]
+compression-formats = ["xz"]
+compression-profile = "fast"
 EOF
 
 grep -R "tls-model=initial-exec" src || true
@@ -37,4 +42,4 @@ sed -i '/tls-model=initial-exec/d' src/bootstrap/src/bin/rustc.rs
 
 grep -R "tls-model=initial-exec" src || true
 
-python3 x.py dist bootstrap cargo clippy rustfmt --include-default-paths
+python3 x.py dist

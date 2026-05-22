@@ -46,8 +46,7 @@ find /patched-toolchain -name "*rustfmt*"
 
 ls /patched-toolchain/lib/rustlib/ 2>/dev/null || echo "no rustlib dir"
 
-rustup toolchain link patched /patched-toolchain
-rustup override set patched
-
-rustc -Vv
-cargo -V
+/patched-toolchain/bin/rustc -Vv
+/patched-toolchain/bin/cargo -V
+/patched-toolchain/bin/cargo clippy --version
+/patched-toolchain/bin/rustfmt --version
