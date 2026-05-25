@@ -1,6 +1,11 @@
 #!/usr/bin/env bash
 set -euxo pipefail
 
+function error() {
+    echo "$1"
+    exit 1
+}
+
 RUST_COMMIT="af302a67fdc508cfd08ee22facb96bcf0e5bf831"
 
 apt update
@@ -36,12 +41,12 @@ compression-formats = ["xz"]
 compression-profile = "fast"
 EOF
 
-if grep -R "tls-model=initial-exec" src; then
-    error "tls-model patch still present"
-fi
+grep -R "tls-model=initial-exec" src
 
 sed -i '/tls-model=initial-exec/d' src/bootstrap/src/bin/rustc.rs
 
-grep -R "tls-model=initial-exec" src 
+if grep -R "tls-model=initial-exec" src; then
+    error "tls-model patch still present"
+fi
 
 python3 x.py dist
