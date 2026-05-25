@@ -37,6 +37,8 @@ RUSTC_DIR=$(find /rust-dist -maxdepth 1 -type d -name "rustc-*" ! -name "rustc-d
 /rust-dist/clippy-*/install.sh --prefix=/patched-toolchain
 /rust-dist/rustfmt-*/install.sh --prefix=/patched-toolchain
 
+ls -la /patched-toolchain/bin  
+
 find /patched-toolchain -name "librustc_driver*.so" 2>/dev/null
 find /patched-toolchain -name "rustc_middle*" 2>/dev/null
 find /patched-toolchain -name "rustc_hir*" 2>/dev/null
@@ -50,3 +52,25 @@ ls /patched-toolchain/lib/rustlib/ 2>/dev/null || echo "no rustlib dir"
 /patched-toolchain/bin/cargo -V
 /patched-toolchain/bin/cargo clippy --version
 /patched-toolchain/bin/rustfmt --version
+
+export PATH="/patched-toolchain/bin:$PATH"
+
+mkdir /tmp/toolchain-test
+cd /tmp/toolchain-test
+
+cargo new hello-world
+cd hello-world
+
+cargo build
+
+cargo clippy -- -D warnings
+
+cargo fmt --check
+
+cat > src/main.rs <<EOF
+fn main() {
+    println!("hello");
+}
+EOF
+
+cargo run
