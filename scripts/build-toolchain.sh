@@ -36,7 +36,9 @@ compression-formats = ["xz"]
 compression-profile = "fast"
 EOF
 
-grep -R "tls-model=initial-exec" src 
+if grep -R "tls-model=initial-exec" src; then
+    error "tls-model patch still present"
+fi
 
 sed -i '/tls-model=initial-exec/d' src/bootstrap/src/bin/rustc.rs
 
