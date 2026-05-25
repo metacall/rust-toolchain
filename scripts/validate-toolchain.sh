@@ -6,6 +6,12 @@ function error() {
     exit 1
 }
 
+which rustc && error "rustc already installed before validation"
+
+which cargo && error "cargo already installed before validation"
+
+which rustfmt && error "rustfmt already installed before validation"
+
 apt update
 apt install -y \
     curl \
@@ -50,6 +56,12 @@ RUSTC_DIR=$(find /rust-dist -maxdepth 1 -type d -name "rustc-*" ! -name "rustc-d
 
 # ls /patched-toolchain/lib/rustlib/ 2>/dev/null || echo "no rustlib dir"
 
+rustc -Vv | grep "1.94.0-nightly" || error "wrong rustc version"
+
+cargo -V | grep "1.94.0" || error "wrong cargo version"
+
+rustfmt --version | grep "nightly" || error "wrong rustfmt version"
+
 rustc -Vv || error "rustc validation failed"
 
 cargo -V || error "cargo validation failed"
@@ -58,13 +70,13 @@ cargo clippy --version || error "clippy validation failed"
 
 rustfmt --version || error "rustfmt validation failed"
 
-which rustc || error "rustc not found in path"
+which rustc | grep "/usr/local/bin" || error "rustc not using installed toolchain"
 
-which cargo || error "cargo not found in path"
+which cargo | grep "/usr/local/bin" || error "cargo not using installed toolchain"
 
-which cargo-clippy || error "clippy not found in path"
+which cargo-clippy | grep "/usr/local/bin" || error "clippy not using installed toolchain"
 
-which rustfmt || error "rustfmt not found in path"
+which rustfmt | grep "/usr/local/bin" || error "rustfmt not using installed toolchain"
 
 
 mkdir /tmp/toolchain-test

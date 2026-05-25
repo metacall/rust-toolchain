@@ -36,10 +36,10 @@ compression-formats = ["xz"]
 compression-profile = "fast"
 EOF
 
-grep -R "tls-model=initial-exec" src || true
+grep -R "tls-model=initial-exec" src 
 
 sed -i '/tls-model=initial-exec/d' src/bootstrap/src/bin/rustc.rs
 
-grep -R "tls-model=initial-exec" src || true
+grep -R "tls-model=initial-exec" src 
 
 python3 x.py dist
