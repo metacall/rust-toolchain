@@ -75,16 +75,40 @@ done
 
 RUSTC_DIR=$(find /rust-dist -maxdepth 1 -type d -name "rustc-*" ! -name "rustc-dev-*")
 
+echo "SNAPSHOT BEFORE INSTALL"
+
+find /usr/local -type f | sort > /tmp/usr-local-before.txt
+
+wc -l /tmp/usr-local-before.txt
+
 "$RUSTC_DIR/install.sh" 
 /rust-dist/rust-std-*/install.sh 
 /rust-dist/cargo-*/install.sh 
 /rust-dist/rustc-dev-*-x86_64-unknown-linux-gnu/install.sh 
 /rust-dist/clippy-*/install.sh 
-/rust-dist/rustfmt-*/install.sh 
+/rust-dist/rustfmt-*/install.sh
 
-rm -rf /root/.rustup
-rm -rf /root/.cargo
-hash -r
+echo "SNAPSHOT AFTER INSTALL"
+
+find /usr/local -type f | sort > /tmp/usr-local-after.txt
+
+wc -l /tmp/usr-local-after.txt
+
+echo "GENERATING DIFF"
+
+comm -13 \
+    /tmp/usr-local-before.txt \
+    /tmp/usr-local-after.txt \
+    > /tmp/rust-installed-files.txt
+
+cat /tmp/rust-installed-files.txt
+
+echo "CREATING TOOLCHAIN ARCHIVE"
+
+tar -czf /tmp/patched-rust-toolchain.tar.gz \
+    -T /tmp/rust-installed-files.txt
+
+tar -tf /tmp/patched-rust-toolchain.tar.gz | head
 
 which rustc
 which cargo
