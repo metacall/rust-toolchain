@@ -82,6 +82,16 @@ RUSTC_DIR=$(find /rust-dist -maxdepth 1 -type d -name "rustc-*" ! -name "rustc-d
 /rust-dist/clippy-*/install.sh 
 /rust-dist/rustfmt-*/install.sh 
 
+rm -rf /root/.rustup
+rm -rf /root/.cargo
+hash -r
+
+which rustc
+which cargo
+
+rustc -Vv
+cargo -V
+
 # find /patched-toolchain -name "librustc_driver*.so" 2>/dev/null
 # find /patched-toolchain -name "rustc_middle*" 2>/dev/null
 # find /patched-toolchain -name "rustc_hir*" 2>/dev/null
