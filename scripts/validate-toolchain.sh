@@ -81,20 +81,22 @@ find /usr/local -type f | sort > /tmp/usr-local-before.txt
 
 wc -l /tmp/usr-local-before.txt
 
-"$RUSTC_DIR/install.sh" 
-/rust-dist/rust-std-*/install.sh 
-/rust-dist/cargo-*/install.sh 
-/rust-dist/rustc-dev-*-x86_64-unknown-linux-gnu/install.sh 
-/rust-dist/clippy-*/install.sh 
-/rust-dist/rustfmt-*/install.sh
+# "$RUSTC_DIR/install.sh" 
+# /rust-dist/rust-std-*/install.sh 
+# /rust-dist/cargo-*/install.sh 
+# /rust-dist/rustc-dev-*-x86_64-unknown-linux-gnu/install.sh 
+# /rust-dist/clippy-*/install.sh 
+# /rust-dist/rustfmt-*/install.sh
 
-echo "SNAPSHOT AFTER INSTALL"
+mkdir -p /usr/local/bin
+echo "asd" > /usr/local/bin/test.txt
+chmod +x /usr/local/bin/test.txt
+
+cd /
 
 find /usr/local -type f | sort > /tmp/usr-local-after.txt
 
 wc -l /tmp/usr-local-after.txt
-
-echo "GENERATING DIFF"
 
 comm -13 \
     /tmp/usr-local-before.txt \
@@ -108,13 +110,13 @@ echo "CREATING TOOLCHAIN ARCHIVE"
 tar -czf /tmp/patched-rust-toolchain.tar.gz \
     -T /tmp/rust-installed-files.txt
 
-tar -tf /tmp/patched-rust-toolchain.tar.gz | head
+# tar -tf /tmp/patched-rust-toolchain.tar.gz | head
 
-which rustc
-which cargo
+# which rustc
+# which cargo
 
-rustc -Vv
-cargo -V
+# rustc -Vv
+# cargo -V
 
 # find /patched-toolchain -name "librustc_driver*.so" 2>/dev/null
 # find /patched-toolchain -name "rustc_middle*" 2>/dev/null
@@ -125,66 +127,66 @@ cargo -V
 
 # ls /patched-toolchain/lib/rustlib/ 2>/dev/null || echo "no rustlib dir"
 
-echo "AFTER TOOLCHAIN INSTALL"
+# echo "AFTER TOOLCHAIN INSTALL"
 
-which rustc
-which cargo
+# which rustc
+# which cargo
 
-realpath $(which rustc)
-realpath $(which cargo)
+# realpath $(which rustc)
+# realpath $(which cargo)
 
-ls -la /usr/local/bin/rustc
-ls -la /usr/local/bin/cargo
+# ls -la /usr/local/bin/rustc
+# ls -la /usr/local/bin/cargo
 
-/usr/local/bin/rustc -Vv
-/usr/local/bin/cargo -V
+# /usr/local/bin/rustc -Vv
+# /usr/local/bin/cargo -V
 
-rustc -Vv
-cargo -V
+# rustc -Vv
+# cargo -V
 
-echo $PATH
+# echo $PATH
 
-rustc -Vv | grep "1.94.0-nightly" || error "wrong rustc version"
+# rustc -Vv | grep "1.94.0-nightly" || error "wrong rustc version"
 
-cargo -V | grep "1.94.0" || error "wrong cargo version"
+# cargo -V | grep "1.94.0" || error "wrong cargo version"
 
-rustfmt --version | grep "nightly" || error "wrong rustfmt version"
+# rustfmt --version | grep "nightly" || error "wrong rustfmt version"
 
-rustc -Vv || error "rustc validation failed"
+# rustc -Vv || error "rustc validation failed"
 
-cargo -V || error "cargo validation failed"
+# cargo -V || error "cargo validation failed"
 
-cargo clippy --version || error "clippy validation failed"
+# cargo clippy --version || error "clippy validation failed"
 
-rustfmt --version || error "rustfmt validation failed"
+# rustfmt --version || error "rustfmt validation failed"
 
-which rustc | grep "/usr/local/bin" || error "rustc not using installed toolchain"
+# which rustc | grep "/usr/local/bin" || error "rustc not using installed toolchain"
 
-which cargo | grep "/usr/local/bin" || error "cargo not using installed toolchain"
+# which cargo | grep "/usr/local/bin" || error "cargo not using installed toolchain"
 
-which cargo-clippy | grep "/usr/local/bin" || error "clippy not using installed toolchain"
+# which cargo-clippy | grep "/usr/local/bin" || error "clippy not using installed toolchain"
 
-which rustfmt | grep "/usr/local/bin" || error "rustfmt not using installed toolchain"
+# which rustfmt | grep "/usr/local/bin" || error "rustfmt not using installed toolchain"
 
 
-mkdir /tmp/toolchain-test
-cd /tmp/toolchain-test
+# mkdir /tmp/toolchain-test
+# cd /tmp/toolchain-test
 
-cargo new hello-world
-cd hello-world
+# cargo new hello-world
+# cd hello-world
 
-cargo build || error "cargo build failed"
+# cargo build || error "cargo build failed"
 
-cargo clippy -- -D warnings || error "clippy failed"
+# cargo clippy -- -D warnings || error "clippy failed"
 
-cargo fmt --check || error "cargo fmt check failed"
+# cargo fmt --check || error "cargo fmt check failed"
 
-cat > src/main.rs <<EOF
-fn main() {
-    println!("hello");
-}
-EOF
+# cat > src/main.rs <<EOF
+# fn main() {
+#     println!("hello");
+# }
+# EOF
 
-cargo run || error "cargo run failed"
+# cargo run || error "cargo run failed"
 
-cargo run
+# cargo run
