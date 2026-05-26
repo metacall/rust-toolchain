@@ -6,11 +6,17 @@ function error() {
     exit 1
 }
 
-which rustc && error "rustc already installed before validation"
+if command -v rustc >/dev/null 2>&1; then
+    error "rustc already installed before validation"
+fi
 
-which cargo && error "cargo already installed before validation"
+if command -v cargo >/dev/null 2>&1; then
+    error "cargo already installed before validation"
+fi
 
-which rustfmt && error "rustfmt already installed before validation"
+if command -v rustfmt >/dev/null 2>&1; then
+    error "rustfmt already installed before validation"
+fi
 
 apt update
 apt install -y \
@@ -22,8 +28,37 @@ apt install -y \
     pkg-config \
     libssl-dev
 
+echo "BEFORE RUSTUP INSTALL"
+
+if command -v rustc >/dev/null 2>&1; then
+    which rustc
+    rustc -Vv
+else
+    echo "rustc not installed"
+fi
+
+if command -v cargo >/dev/null 2>&1; then
+    which cargo
+    cargo -V
+else
+    echo "cargo not installed"
+fi
+
 curl https://sh.rustup.rs -sSf | sh -s -- -y
 export PATH="$HOME/.cargo/bin:$PATH"
+
+echo "AFTER RUSTUP INSTALL"
+
+which rustc
+which cargo
+
+realpath $(which rustc)
+realpath $(which cargo)
+
+rustc -Vv
+cargo -V
+
+echo $PATH
 
 mkdir -p /rust-dist
 
@@ -55,6 +90,25 @@ RUSTC_DIR=$(find /rust-dist -maxdepth 1 -type d -name "rustc-*" ! -name "rustc-d
 # find /patched-toolchain -name "*rustfmt*"
 
 # ls /patched-toolchain/lib/rustlib/ 2>/dev/null || echo "no rustlib dir"
+
+echo "AFTER TOOLCHAIN INSTALL"
+
+which rustc
+which cargo
+
+realpath $(which rustc)
+realpath $(which cargo)
+
+ls -la /usr/local/bin/rustc
+ls -la /usr/local/bin/cargo
+
+/usr/local/bin/rustc -Vv
+/usr/local/bin/cargo -V
+
+rustc -Vv
+cargo -V
+
+echo $PATH
 
 rustc -Vv | grep "1.94.0-nightly" || error "wrong rustc version"
 
