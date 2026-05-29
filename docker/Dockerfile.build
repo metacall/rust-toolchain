@@ -1,9 +1,0 @@
-FROM debian:trixie-slim
-
-WORKDIR /workspace
-
-COPY scripts/build-toolchain.sh /build-toolchain.sh
-
-RUN chmod +x /build-toolchain.sh
-
-CMD ["/build-toolchain.sh"]

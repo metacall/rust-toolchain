@@ -1,9 +1,0 @@
-FROM debian:trixie-slim
-
-WORKDIR /workspace
-
-COPY scripts/validate-toolchain.sh /validate-toolchain.sh
-
-RUN chmod +x /validate-toolchain.sh
-
-CMD ["/validate-toolchain.sh"]
