@@ -51,14 +51,7 @@ cd /tmp/toolchain-test
 cargo new hello-world
 cd hello-world
 
-# TODO
-# cat > src/main.rs <<EOF
-# fn main() {
-# 	 println!("hello");
-# }
-# EOF
-
 cargo build || error "cargo build failed"
 cargo clippy -- -D warnings || error "clippy failed"
 cargo fmt --check || error "cargo fmt check failed"
-cargo run || error "cargo run failed"
+cargo run | grep "Hello, world!" || error "cargo run failed"
