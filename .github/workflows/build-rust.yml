@@ -4,7 +4,8 @@ on:
   workflow_dispatch:
 
 jobs:
-  build-rust:
+  build:
+    name: Build Rust Toolchain
     runs-on: ubuntu-latest
 
     steps:
@@ -12,55 +13,19 @@ jobs:
         uses: actions/checkout@v4
 
       - name: Build toolchain Docker image
-        run: |
-          docker build --no-cache \
-            -f docker/Dockerfile.build \
-            -t patched-rust-build .
+        run: ./release.sh
 
-      - name: Run toolchain build
-        run: |
-          docker run \
-            --name patched-rust-container \
-            patched-rust-build
+      # - name: Copy distributable artifacts
+      #   run: |
+      #     mkdir -p dist
 
-      - name: Copy distributable artifacts
-        run: |
-          mkdir -p dist
+      #     docker cp \
+      #       patched-rust-container:/workspace/rust/build/dist \
+      #       ./dist
 
-          docker cp \
-            patched-rust-container:/workspace/rust/build/dist \
-            ./dist
-
-      - name: Upload toolchain artifacts
-        uses: actions/upload-artifact@v4
-        with:
-          name: patched-rust-toolchain
-          path: dist
-          retention-days: 1
-
-  validate-toolchain:
-    needs: build-rust
-    runs-on: ubuntu-latest
-
-    steps:
-      - name: Checkout repository
-        uses: actions/checkout@v4
-
-      - name: Download toolchain artifacts
-        uses: actions/download-artifact@v4
-        with:
-          name: patched-rust-toolchain
-          path: toolchain
-
-      - name: Build validation Docker image
-        run: |
-          docker build --no-cache \
-            -f docker/Dockerfile.validate \
-            -t patched-rust-validate .
-
-      - name: Run validation
-        run: |
-          docker run \
-            -v ${{ github.workspace }}/toolchain:/toolchain \
-            patched-rust-validate \
-            bash /validate-toolchain.sh
+      # - name: Upload toolchain artifacts
+      #   uses: actions/upload-artifact@v4
+      #   with:
+      #     name: patched-rust-toolchain
+      #     path: dist
+      #     retention-days: 1

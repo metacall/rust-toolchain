@@ -33,6 +33,7 @@ download-ci-llvm = true
 
 [build]
 extended = true
+docs = false
 
 [rust]
 channel = "nightly"
