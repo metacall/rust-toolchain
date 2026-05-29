@@ -6,6 +6,7 @@ function error() {
     exit 1
 }
 
+# Check if Rust is already installed
 if command -v rustc >/dev/null 2>&1; then
     error "rustc already installed before validation"
 fi
@@ -18,37 +19,20 @@ if command -v rustfmt >/dev/null 2>&1; then
     error "rustfmt already installed before validation"
 fi
 
+# Install dependencies
 apt update
-apt install -y \
+apt install -y --no-install-recommends \
     curl \
+    ca-certificates \
     build-essential \
     xz-utils \
-    cmake \
-    ninja-build \
-    pkg-config \
     libssl-dev
 
-echo "BEFORE RUSTUP INSTALL"
-
-if command -v rustc >/dev/null 2>&1; then
-    which rustc
-    rustc -Vv
-else
-    echo "rustc not installed"
-fi
-
-if command -v cargo >/dev/null 2>&1; then
-    which cargo
-    cargo -V
-else
-    echo "cargo not installed"
-fi
-
+# Install rustup
 curl https://sh.rustup.rs -sSf | sh -s -- -y
 export PATH="$HOME/.cargo/bin:$PATH"
 
-echo "AFTER RUSTUP INSTALL"
-
+# Validate rust installation
 which rustc
 which cargo
 
@@ -58,8 +42,7 @@ realpath $(which cargo)
 rustc -Vv
 cargo -V
 
-echo $PATH
-
+# Uncompress all rust components
 mkdir -p /rust-dist
 
 for f in \
