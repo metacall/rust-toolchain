@@ -32,17 +32,16 @@ apt install -y --no-install-recommends \
 curl https://sh.rustup.rs -sSf | sh -s -- -y
 export PATH="$HOME/.cargo/bin:$PATH"
 
-# Validate rust installation
+# Validate Rust installation
 which rustc
-which cargo
-
 realpath $(which rustc)
-realpath $(which cargo)
-
 rustc -Vv
+
+which cargo
+realpath $(which cargo)
 cargo -V
 
-# Uncompress all rust components
+# Uncompress all Rust components
 mkdir -p /rust-dist
 
 for f in \
@@ -56,20 +55,21 @@ do
     tar -xf "$f" -C /rust-dist
 done
 
-RUSTC_DIR=$(find /rust-dist -maxdepth 1 -type d -name "rustc-*" ! -name "rustc-dev-*")
-
-echo "SNAPSHOT BEFORE INSTALL"
-
+# Generate snapshot of install prefix before installing Rust
 find /usr/local -type f | sort > /tmp/usr-local-before.txt
-
 wc -l /tmp/usr-local-before.txt
 
-# "$RUSTC_DIR/install.sh" 
-# /rust-dist/rust-std-*/install.sh 
-# /rust-dist/cargo-*/install.sh 
-# /rust-dist/rustc-dev-*-x86_64-unknown-linux-gnu/install.sh 
-# /rust-dist/clippy-*/install.sh 
-# /rust-dist/rustfmt-*/install.sh
+# TODO
+exit 0
+
+# TODO: Rewrite this into: foreach install.sh, run the script
+RUSTC_DIR=$(find /rust-dist -maxdepth 1 -type d -name "rustc-*" ! -name "rustc-dev-*")
+"$RUSTC_DIR/install.sh"
+/rust-dist/rust-std-*/install.sh
+/rust-dist/cargo-*/install.sh
+/rust-dist/rustc-dev-*-x86_64-unknown-linux-gnu/install.sh
+/rust-dist/clippy-*/install.sh
+/rust-dist/rustfmt-*/install.sh
 
 mkdir -p /usr/local/bin
 echo "asd" > /usr/local/bin/test.txt
