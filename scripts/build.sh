@@ -47,7 +47,6 @@ EOF
 
 # Patch initial-exec flag
 grep -R "tls-model=initial-exec" src
-# sed -i 's/-Ztls-model=initial-exec/-Ztls-model=local-dynamic/g' src/bootstrap/src/bin/rustc.rs
 sed -i '/-Ztls-model=initial-exec/d' src/bootstrap/src/bin/rustc.rs
 
 # Validate flag
