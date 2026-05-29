@@ -2,6 +2,16 @@ name: Build Rust Toolchain
 
 on:
   workflow_dispatch:
+  pull_request:
+  push:
+    tags:
+      - 'v*.*.*'
+    branches:
+      - main
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
 
 jobs:
   build:
@@ -12,20 +22,12 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      - name: Build toolchain Docker image
+      - name: Build toolchain
         run: ./release.sh
 
-      # - name: Copy distributable artifacts
-      #   run: |
-      #     mkdir -p dist
-
-      #     docker cp \
-      #       patched-rust-container:/workspace/rust/build/dist \
-      #       ./dist
-
-      # - name: Upload toolchain artifacts
-      #   uses: actions/upload-artifact@v4
-      #   with:
-      #     name: patched-rust-toolchain
-      #     path: dist
-      #     retention-days: 1
+      - name: Upload toolchain artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: metacall-rust-toolchain
+          path: dist/rust-toolchain.tar.gz
+          retention-days: 1

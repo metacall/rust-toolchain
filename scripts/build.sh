@@ -4,22 +4,22 @@ set -euxo pipefail
 RUST_COMMIT="af302a67fdc508cfd08ee22facb96bcf0e5bf831"
 
 function error() {
-    echo "$1"
-    exit 1
+	echo "$1"
+	exit 1
 }
 
 # Install dependencies
 apt update
 apt install -y --no-install-recommends \
-    git \
-    curl \
-    ca-certificates \
-    python3 \
-    build-essential \
-    cmake \
-    ninja-build \
-    pkg-config \
-    libssl-dev 
+	git \
+	curl \
+	ca-certificates \
+	python3 \
+	build-essential \
+	cmake \
+	ninja-build \
+	pkg-config \
+	libssl-dev
 
 # Clone Rust
 git clone https://github.com/rust-lang/rust.git
@@ -51,7 +51,7 @@ sed -i 's/-Ztls-model=initial-exec/-Ztls-model=local-dynamic/g' src/bootstrap/sr
 
 # Validate flag
 if grep -R "tls-model=initial-exec" src; then
-    error "tls-model patch still present"
+	error "tls-model patch still present"
 fi
 
 # Build Rust
