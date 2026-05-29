@@ -1,4 +1,4 @@
-name: Build Patched Rust Toolchain
+name: Build Rust Toolchain
 
 on:
   workflow_dispatch:

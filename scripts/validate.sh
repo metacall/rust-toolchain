@@ -2,111 +2,29 @@
 set -euxo pipefail
 
 function error() {
-    echo "$1"
-    exit 1
+	echo "$1"
+	exit 1
 }
 
-# Check if Rust is already installed
-if command -v rustc >/dev/null 2>&1; then
-    error "rustc already installed before validation"
-fi
+# Uncompress toolchain
+tar -xzf /rust-toolchain.tar.gz -C /
 
-if command -v cargo >/dev/null 2>&1; then
-    error "cargo already installed before validation"
-fi
+# Export bin folder
+export PATH="${PATH}:/usr/local/bin"
 
-if command -v rustfmt >/dev/null 2>&1; then
-    error "rustfmt already installed before validation"
-fi
-
-# Install dependencies
-apt update
-apt install -y --no-install-recommends \
-    curl \
-    ca-certificates \
-    build-essential \
-    xz-utils \
-    libssl-dev
-
-# Install rustup
-curl https://sh.rustup.rs -sSf | sh -s -- -y
-export PATH="$HOME/.cargo/bin:$PATH"
-
-# Validate Rust installation
+# Validate
 which rustc
-realpath $(which rustc)
-rustc -Vv
-
 which cargo
-realpath $(which cargo)
+
+rustc -Vv
 cargo -V
 
-# Uncompress all Rust components
-mkdir -p /rust-dist
-
-for f in \
-    /toolchain/dist/rustc-*-x86_64-unknown-linux-gnu.tar.xz \
-    /toolchain/dist/rust-std-*.tar.xz \
-    /toolchain/dist/cargo-*.tar.xz \
-    /toolchain/dist/rustc-dev-*-x86_64-unknown-linux-gnu.tar.xz \
-    /toolchain/dist/clippy-*.tar.xz \
-    /toolchain/dist/rustfmt-*.tar.xz
-do
-    tar -xf "$f" -C /rust-dist
-done
-
-# Generate snapshot of install prefix before installing Rust
-find /usr/local -type f | sort > /tmp/usr-local-before.txt
-wc -l /tmp/usr-local-before.txt
-
-# TODO
-exit 0
-
-# TODO: Rewrite this into: foreach install.sh, run the script
-RUSTC_DIR=$(find /rust-dist -maxdepth 1 -type d -name "rustc-*" ! -name "rustc-dev-*")
-"$RUSTC_DIR/install.sh"
-/rust-dist/rust-std-*/install.sh
-/rust-dist/cargo-*/install.sh
-/rust-dist/rustc-dev-*-x86_64-unknown-linux-gnu/install.sh
-/rust-dist/clippy-*/install.sh
-/rust-dist/rustfmt-*/install.sh
-
-mkdir -p /usr/local/bin
-echo "asd" > /usr/local/bin/test.txt
-chmod +x /usr/local/bin/test.txt
-
-cd /
-
-find /usr/local -type f | sort > /tmp/usr-local-after.txt
-
-wc -l /tmp/usr-local-after.txt
-
-comm -13 \
-    /tmp/usr-local-before.txt \
-    /tmp/usr-local-after.txt \
-    > /tmp/rust-installed-files.txt
-
-cat /tmp/rust-installed-files.txt
-
-echo "CREATING TOOLCHAIN ARCHIVE"
-
-tar -czf /tmp/patched-rust-toolchain.tar.gz \
-    -T /tmp/rust-installed-files.txt
-
-# tar -tf /tmp/patched-rust-toolchain.tar.gz | head
-
-# which rustc
-# which cargo
-
-# rustc -Vv
-# cargo -V
-
-# find /patched-toolchain -name "librustc_driver*.so" 2>/dev/null
-# find /patched-toolchain -name "rustc_middle*" 2>/dev/null
-# find /patched-toolchain -name "rustc_hir*" 2>/dev/null
-# find /patched-toolchain -name "rustc_interface*" 2>/dev/null
-# find /patched-toolchain -name "*clippy*"
-# find /patched-toolchain -name "*rustfmt*"
+find /usr/local -name "librustc_driver*.so" 2>/dev/null
+find /usr/local -name "rustc_middle*" 2>/dev/null
+find /usr/local -name "rustc_hir*" 2>/dev/null
+find /usr/local -name "rustc_interface*" 2>/dev/null
+find /usr/local -name "*clippy*" 2>/dev/null
+find /usr/local -name "*rustfmt*" 2>/dev/null
 
 # ls /patched-toolchain/lib/rustlib/ 2>/dev/null || echo "no rustlib dir"
 
@@ -166,7 +84,7 @@ tar -czf /tmp/patched-rust-toolchain.tar.gz \
 
 # cat > src/main.rs <<EOF
 # fn main() {
-#     println!("hello");
+#	 println!("hello");
 # }
 # EOF
 
