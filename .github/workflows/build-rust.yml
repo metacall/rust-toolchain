@@ -15,8 +15,17 @@ concurrency:
 
 jobs:
   build:
-    name: Build Rust Toolchain
+    name: Build Rust Toolchain (${{ matrix.distro }})
     runs-on: ubuntu-latest
+
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - image: debian:trixie-slim
+            distro: trixie
+          - image: debian:bookworm-slim
+            distro: bookworm
 
     steps:
       - name: Free Disk Space
@@ -34,11 +43,13 @@ jobs:
         uses: actions/checkout@v4
 
       - name: Build toolchain
+        env:
+          RUST_TOOLCHAIN_IMAGE: ${{ matrix.image }}
         run: ./release.sh
 
       - name: Upload toolchain artifacts
         uses: actions/upload-artifact@v4
         with:
-          name: metacall-rust-toolchain
+          name: metacall-rust-toolchain-${{ matrix.distro }}
           path: dist/rust-toolchain.tar.gz
           retention-days: 1
