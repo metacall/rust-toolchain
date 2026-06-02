@@ -24,6 +24,52 @@ DEST_DIR="/rust-dist"
 mkdir -p "$DEST_DIR"
 ls -Rla ${SRC_DIR}
 
+# Generate snapshot of install prefix before installing Rust
+find /usr/local -type f | sort > /tmp/install-prefix-before.txt
+wc -l /tmp/install-prefix-before.txt
+
+# Function for installing components and generating the tarball
+function generate_tarball() {
+	local arr=("$@")  # "$@" contains all arguments passed to the function
+
+	# Uncompress all Rust components
+	for component in "${arr[@]}"; do
+		file="${SRC_DIR}/${component}.tar.xz"
+
+		echo "Component ${component}: ${file}"
+
+		if [ ! -f "${file}" ]; then
+			error "No tarball found for ${component}"
+		fi
+
+		echo "Extracting ${file}"
+		tar -xf "${file}" -C "${DEST_DIR}"
+	done
+
+	ls -la "${DEST_DIR}"
+
+	# Install Rust components
+	find "${DEST_DIR}" -type f -name "install.sh" -exec bash -c '
+		echo "Installing: $1"
+		bash "$1"
+	' _ {} \;
+
+	# Generate snapshot of install prefix after installing Rust
+	find /usr/local -type f | sort > /tmp/install-prefix-after.txt
+	wc -l /tmp/install-prefix-after.txt
+
+	# Generate diff
+	comm -13 \
+		/tmp/install-prefix-before.txt \
+		/tmp/install-prefix-after.txt \
+		> /tmp/rust-toolchain.txt
+
+	cat /tmp/rust-toolchain.txt
+
+	# Generate toolchain file
+	tar -czf /rust-toolchain.tar.gz -T /tmp/rust-toolchain.txt
+}
+
 # List of components
 triplet=$(rustc -vV | grep host | awk '{print $2}')
 components=(
@@ -38,43 +84,6 @@ components=(
 	"rust-src-nightly"
 )
 
-# Uncompress all Rust components
-for component in "${components[@]}"; do
-	file="${SRC_DIR}/${component}.tar.xz"
-
-	echo "Component ${component}: ${file}"
-
-	if [ ! -f "${file}" ]; then
-		error "No tarball found for ${component}"
-	fi
-
-	echo "Extracting ${file}"
-	tar -xf "${file}" -C "${DEST_DIR}"
-done
-
-ls -la "${DEST_DIR}"
-
-# Generate snapshot of install prefix before installing Rust
-find /usr/local -type f | sort > /tmp/install-prefix-before.txt
-wc -l /tmp/install-prefix-before.txt
-
-# Install Rust components
-find "${DEST_DIR}" -type f -name "install.sh" -exec bash -c '
-	echo "Installing: $1"
-	bash "$1"
-' _ {} \;
-
-# Generate snapshot of install prefix after installing Rust
-find /usr/local -type f | sort > /tmp/install-prefix-after.txt
-wc -l /tmp/install-prefix-after.txt
-
-# Generate diff
-comm -13 \
-	/tmp/install-prefix-before.txt \
-	/tmp/install-prefix-after.txt \
-	> /tmp/rust-toolchain.txt
-
-cat /tmp/rust-toolchain.txt
-
-# Generate toolchain file
-tar -czf /rust-toolchain.tar.gz -T /tmp/rust-toolchain.txt
+# Generate dev tarball
+generate_tarball "${components[@]}"
+# mv /rust-toolchain.tar.gz /rust-toolchain-dev.tar.gz
