@@ -16,7 +16,17 @@ apt update && apt install -y --no-install-recommends \
 tar -xzf /rust-toolchain-dev.tar.gz -C /
 
 # debugging
-tar -tzf /rust-toolchain-dev.tar.gz | grep -E "rustc|cargo|clippy|rustfmt" || true
+echo "rustc"
+tar -tzf /rust-toolchain-dev.tar.gz | grep "^usr/local/bin/rustc$" || true
+
+echo "cargo"
+tar -tzf /rust-toolchain-dev.tar.gz | grep "^usr/local/bin/cargo$" || true
+
+echo "cargo-clippy"
+tar -tzf /rust-toolchain-dev.tar.gz | grep "^usr/local/bin/cargo-clippy$" || true
+
+echo "rustfmt"
+tar -tzf /rust-toolchain-dev.tar.gz | grep "^usr/local/bin/rustfmt$" || true
 
 # Validate
 which rustc
