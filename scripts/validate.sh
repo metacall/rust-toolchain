@@ -15,6 +15,9 @@ apt update && apt install -y --no-install-recommends \
 # Uncompress toolchain
 tar -xzf /rust-toolchain-dev.tar.gz -C /
 
+# debugging
+tar -tzf /rust-toolchain-dev.tar.gz | grep -E "rustc|cargo|clippy|rustfmt" || true
+
 # Validate
 which rustc
 which cargo
