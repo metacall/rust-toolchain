@@ -13,7 +13,7 @@ apt update && apt install -y --no-install-recommends \
 	libssl-dev
 
 # Uncompress toolchain
-tar -xzf /rust-toolchain.tar.gz -C /
+tar -xzf /rust-toolchain-dev.tar.gz -C /
 
 # Validate
 which rustc

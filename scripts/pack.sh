@@ -94,8 +94,14 @@ runtime_components=(
 )
 
 dev_components=(
+	"cargo-nightly-${triplet}"
+	"clippy-nightly-${triplet}"
 	"rust-analysis-nightly-${triplet}"
+	"rust-analyzer-nightly-${triplet}"
+	"rust-std-nightly-${triplet}"
+	"rustc-nightly-${triplet}"
 	"rustc-dev-nightly-${triplet}"
+	"rustfmt-nightly-${triplet}"
 	"rust-src-nightly"
 )
 
@@ -107,4 +113,4 @@ mv /rust-toolchain.tar.gz /rust-toolchain-runtime.tar.gz
 find /usr/local -type f | sort > /tmp/install-prefix-before.txt
 
 generate_tarball "${dev_components[@]}"
-# mv /rust-toolchain.tar.gz /rust-toolchain-dev.tar.gz
+mv /rust-toolchain.tar.gz /rust-toolchain-dev.tar.gz
