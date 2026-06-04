@@ -86,20 +86,14 @@ triplet=$(rustc -vV | grep host | awk '{print $2}')
 
 runtime_components=(
 	"cargo-nightly-${triplet}"
-	"clippy-nightly-${triplet}"
 	"rust-std-nightly-${triplet}"
 	"rustc-nightly-${triplet}"
-	"rust-analyzer-nightly-${triplet}"
-	"rustfmt-nightly-${triplet}"
 )
 
 dev_components=(
-	"cargo-nightly-${triplet}"
 	"clippy-nightly-${triplet}"
 	"rust-analysis-nightly-${triplet}"
 	"rust-analyzer-nightly-${triplet}"
-	"rust-std-nightly-${triplet}"
-	"rustc-nightly-${triplet}"
 	"rustc-dev-nightly-${triplet}"
 	"rustfmt-nightly-${triplet}"
 	"rust-src-nightly"
