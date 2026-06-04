@@ -51,5 +51,7 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: metacall-rust-toolchain-${{ matrix.distro }}
-          path: dist/rust-toolchain.tar.gz
-          retention-days: 1
+          path: |
+            dist/rust-toolchain-runtime.tar.gz
+            dist/rust-toolchain-dev.tar.gz
+          retention-days: 7
