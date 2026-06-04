@@ -104,7 +104,6 @@ generate_tarball "${runtime_components[@]}"
 mv /rust-toolchain.tar.gz /rust-toolchain-runtime.tar.gz
 
 # Generate dev tarball
-find /usr/local -type f | sort > /tmp/install-prefix-before.txt
 
 generate_tarball "${dev_components[@]}"
 mv /rust-toolchain.tar.gz /rust-toolchain-dev.tar.gz

@@ -12,21 +12,11 @@ apt update && apt install -y --no-install-recommends \
 	libc6-dev \
 	libssl-dev
 
-# Uncompress toolchain
+# Uncompress toolchain runtime tarball
+tar -xzf /rust-toolchain-runtime.tar.gz -C /
+
+# Uncompress toolchain dev tarball
 tar -xzf /rust-toolchain-dev.tar.gz -C /
-
-# debugging
-echo "rustc"
-tar -tzf /rust-toolchain-dev.tar.gz | grep "^usr/local/bin/rustc$" || true
-
-echo "cargo"
-tar -tzf /rust-toolchain-dev.tar.gz | grep "^usr/local/bin/cargo$" || true
-
-echo "cargo-clippy"
-tar -tzf /rust-toolchain-dev.tar.gz | grep "^usr/local/bin/cargo-clippy$" || true
-
-echo "rustfmt"
-tar -tzf /rust-toolchain-dev.tar.gz | grep "^usr/local/bin/rustfmt$" || true
 
 # Validate
 which rustc
