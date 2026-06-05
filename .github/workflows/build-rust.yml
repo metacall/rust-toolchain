@@ -12,8 +12,36 @@ on:
 concurrency:
   group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
   cancel-in-progress: true
+  
+env:
+  PLATFORM_LIST: > 
+    [
+      "linux/386",
+      "linux/arm64",
+      "linux/riscv64",
+      "linux/arm/v7",
+      "linux/arm/v6"
+    ]
 
 jobs:
+  matrix:
+    name: Generate Platform List
+    runs-on: ubuntu-latest
+    outputs:
+      platform_list: ${{ steps.generate_platform_list.outputs.platform_list }}
+
+    steps:
+      - name: Generate platform list
+        id: generate_platform_list
+        run: |
+          set -exuo pipefail
+          PLATFORM_STRING=$(cat <<EOF
+          ${{ env.PLATFORM_LIST }}
+          EOF
+          )
+          PLATFORM_LIST=$(echo $PLATFORM_STRING | jq -c .)
+          echo "platform_list=$PLATFORM_LIST" >> $GITHUB_OUTPUT
+  
   build:
     name: Build Rust Toolchain (${{ matrix.distro }})
     runs-on: ubuntu-latest
@@ -22,10 +50,13 @@ jobs:
       fail-fast: false
       matrix:
         include:
-          - image: debian:trixie-slim
-            distro: trixie
           - image: debian:bookworm-slim
             distro: bookworm
+            platform: linux/amd64
+          
+          - image: debian:trixie-slim
+            distro: trixie
+            platform: linux/amd64
 
     steps:
       - name: Free Disk Space
@@ -45,11 +76,62 @@ jobs:
       - name: Build toolchain
         env:
           RUST_TOOLCHAIN_IMAGE: ${{ matrix.image }}
+          PLATFORM: ${{ matrix.platform }}
         run: ./release.sh
 
       - name: Upload toolchain artifacts
         uses: actions/upload-artifact@v4
         with:
           name: metacall-rust-toolchain-${{ matrix.distro }}
-          path: dist/rust-toolchain.tar.gz
-          retention-days: 1
+          path: |
+            dist/rust-toolchain-runtime.tar.gz
+            dist/rust-toolchain-dev.tar.gz
+          retention-days: 7 
+
+  build-multiarch-trixie:
+    name: Build Rust Toolchain (trixie-${{ matrix.platform }})
+    runs-on: ubuntu-latest
+    needs: matrix
+
+    strategy:
+      fail-fast: false
+      matrix:
+        platform: ${{ fromJSON(needs.matrix.outputs.platform_list) }}
+
+    steps:
+      - name: Free Disk Space
+        uses: jlumbroso/free-disk-space@main
+        with:
+          tool-cache: true
+          android: true
+          dotnet: true
+          haskell: true
+          large-packages: true
+          docker-images: true
+          swap-storage: true
+
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up QEMU
+        uses: docker/setup-qemu-action@v3
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Build toolchain
+        env:
+          RUST_TOOLCHAIN_IMAGE: debian:trixie-slim
+          PLATFORM: ${{ matrix.platform }}
+        run: ./release.sh
+
+      - name: Upload toolchain artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: metacall-rust-toolchain-trixie-${{ matrix.platform }}
+          path: |
+            dist/rust-toolchain-runtime.tar.gz
+            dist/rust-toolchain-dev.tar.gz
+          retention-days: 7
+
+   
