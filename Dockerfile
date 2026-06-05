@@ -29,7 +29,8 @@ FROM ${RUST_TOOLCHAIN_IMAGE} AS validate
 
 WORKDIR /workspace
 
-COPY --from=pack /rust-toolchain.tar.gz /
+COPY --from=pack /rust-toolchain-runtime.tar.gz /
+COPY --from=pack /rust-toolchain-dev.tar.gz /
 
 COPY scripts/validate.sh /validate.sh
 
