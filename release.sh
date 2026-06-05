@@ -2,6 +2,7 @@
 set -euxo pipefail
 
 docker buildx build \
+  --platform "${PLATFORM:-linux/amd64}" \
   --build-arg RUST_TOOLCHAIN_IMAGE="${RUST_TOOLCHAIN_IMAGE}" \
   --load \
   -t metacall/rust-toolchain .
