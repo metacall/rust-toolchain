@@ -72,18 +72,25 @@ function generate_tarball() {
 
 # List of components
 triplet=$(rustc -vV | grep host | awk '{print $2}')
-components=(
+runtime_components=(
 	"cargo-nightly-${triplet}"
+	"rust-std-nightly-${triplet}"
+	"rustc-nightly-${triplet}"
+)
+
+dev_components=(
 	"clippy-nightly-${triplet}"
 	"rust-analysis-nightly-${triplet}"
 	"rust-analyzer-nightly-${triplet}"
-	"rust-std-nightly-${triplet}"
-	"rustc-nightly-${triplet}"
 	"rustc-dev-nightly-${triplet}"
 	"rustfmt-nightly-${triplet}"
 	"rust-src-nightly"
 )
 
+# generate runtime tarball
+generate_tarball "${runtime_components[@]}"
+mv /rust-toolchain.tar.gz /rust-toolchain-runtime.tar.gz
+
 # Generate dev tarball
-generate_tarball "${components[@]}"
-# mv /rust-toolchain.tar.gz /rust-toolchain-dev.tar.gz
+generate_tarball "${dev_components[@]}"
+mv /rust-toolchain.tar.gz /rust-toolchain-dev.tar.gz
