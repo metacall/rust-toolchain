@@ -6,16 +6,15 @@ function error() {
 	exit 1
 }
 
+# Runtime validation check
 function validate_runtime() {
-    
-	# runtime validation check 
 	rustc -Vv | grep "1.94.0-nightly"|| error "rustc not found in runtime tarball"
 	cargo -V  | grep "1.94.0" || error "cargo not found in runtime tarball"
 
 	which rustc || error "rustc not found in runtime tarball"
-    which cargo || error "cargo not found in runtime tarball"
+	which cargo || error "cargo not found in runtime tarball"
 
-    rm -rf /tmp/runtime-test
+	rm -rf /tmp/runtime-test
 	mkdir -p /tmp/runtime-test
 	cd /tmp/runtime-test
 
@@ -23,12 +22,10 @@ function validate_runtime() {
 	cd hello-world
 	cargo build || error "the program couldn't build"
 	cargo run | grep "Hello, world!" || error "the program couldn't run"
-    
 }
 
+# Development validation check
 function validate_dev() {
-    
-	# dev validation check 
 	cargo clippy --version || error "clippy not found in dev tarball"
 	rustfmt --version || error "rustfmt not found in dev tarball"
 
@@ -46,10 +43,9 @@ apt update && apt install -y --no-install-recommends \
 	libssl-dev
 
 # Uncompress toolchain runtime tarball
- tar -xzf /rust-toolchain-runtime.tar.gz -C /
- validate_runtime
+tar -xzf /rust-toolchain-runtime.tar.gz -C /
+validate_runtime
 
 # Uncompress toolchain dev tarball
- tar -xzf /rust-toolchain-dev.tar.gz -C /
- validate_dev
-
+tar -xzf /rust-toolchain-dev.tar.gz -C /
+validate_dev

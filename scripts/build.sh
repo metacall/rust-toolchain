@@ -29,7 +29,7 @@ git checkout ${RUST_COMMIT}
 # Define our nightly configuration
 cat > config.toml <<EOF
 [llvm]
-download-ci-llvm = true
+download-ci-llvm = false
 
 [build]
 extended = true
