@@ -29,6 +29,10 @@ jobs:
             distro: trixie
           - image: debian:bookworm-slim
             distro: bookworm
+          - image: ubuntu:noble
+            distro: noble
+          - image: ubuntu:jammy
+            distro: jammy
 
     steps:
       - name: Free Disk Space
