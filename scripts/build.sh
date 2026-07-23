@@ -34,6 +34,7 @@ download-ci-llvm = false
 [build]
 extended = true
 docs = false
+sanitizers = true
 
 [rust]
 channel = "nightly"
