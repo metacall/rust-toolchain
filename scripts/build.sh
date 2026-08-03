@@ -34,7 +34,8 @@ download-ci-llvm = false
 [build]
 extended = true
 docs = false
-sanitizers = true
+# TODO: Review sanitizers in forky
+# sanitizers = true
 
 [rust]
 channel = "nightly"
@@ -57,3 +58,4 @@ fi
 
 # Build Rust
 python3 x.py dist
+
