@@ -25,6 +25,8 @@ jobs:
       fail-fast: false
       matrix:
         include:
+          - image: debian:forky-slim
+            distro: forky
           - image: debian:trixie-slim
             distro: trixie
           - image: debian:bookworm-slim
